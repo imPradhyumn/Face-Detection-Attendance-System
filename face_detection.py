@@ -1,7 +1,7 @@
 import cv2
 from numpy import array
 import os,time
-from attendance import mark_attendance
+from mark_attendance import save_attendance
 
 def facedetect(image):
     img_gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -89,32 +89,30 @@ cv2.imshow('Gray',img_gray_test)
 cv2.waitKey(0)
 cv2.destroyAllWindows()'''
 
-#live_prediction
-cam=cv2.VideoCapture(0)
-ch=1
-while True:
-    ret,frame=cam.read()
-    faces,img_gray_test=facedetect(frame)
+def start_detection(subject='Testing'):
+    #live_prediction
+    cam=cv2.VideoCapture(0)
+    ch=1
+    while True:
+        ret,frame=cam.read()
+        faces,img_gray_test=facedetect(frame)
 
-    for f in faces:
-        (x,y,w,h)=f
-        req_region=img_gray_test[y:y+w,x:x+h]
-        label,confi=classifier.predict(req_region)
-        all_labels.append(names_dic[label].capitalize())
-        rectangle(f,img_gray_test)
-        text(img_gray_test,names_dic[label].capitalize(),x,y)
+        for f in faces:
+            (x,y,w,h)=f
+            req_region=img_gray_test[y:y+w,x:x+h]
+            label,confi=classifier.predict(req_region)
+            all_labels.append(names_dic[label].capitalize())
+            rectangle(f,img_gray_test)
+            text(img_gray_test,names_dic[label].capitalize(),x,y)
+            
+        cv2.imshow('Gray',img_gray_test)
         
-    cv2.imshow('Gray',img_gray_test)
-    
-    if cv2.waitKey(10)==ord('q'):
-        break
-cam.release()
-cv2.destroyAllWindows()
+        if cv2.waitKey(10)==ord('q'):
+            break
+    cam.release()
+    cv2.destroyAllWindows()
 
-mark_attendance(all_labels)
+    mark_attendance(all_labels,subject)
 
-
-
-
-
-
+if __name__=='__main__':
+    start_detection(subject)
