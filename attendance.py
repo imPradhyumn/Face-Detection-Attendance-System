@@ -1,4 +1,4 @@
-from pandas import read_csv
+from pandas import read_csv,ExcelWriter
 import datetime as dt
 
 def mark_attendance(names):
@@ -16,7 +16,8 @@ def mark_attendance(names):
         df.loc[i][today]='Yes'
     
     #df.to_csv('attendance_data/attendance.csv')
-    df.to_excel(r'attendance_data/attendance.xlsx',header=True)
+    with ExcelWriter('attendance_data/attendance.xlsx') as writer:
+        df.to_excel(writer,sheet_name=subject.lower())
 
 
 
