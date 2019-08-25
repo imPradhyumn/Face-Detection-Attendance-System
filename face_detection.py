@@ -47,6 +47,7 @@ def create_labels():
     names.remove('')
     
     names_dic=dict(zip(set(fid),names))
+    print(names_dic)
     
     return faces_list,fid,names_dic
 
@@ -72,24 +73,7 @@ classifier=trainer(faces_list,fid)
 
 all_labels=[]
 
-#test_prediction
-'''img_test=cv2.imread('test.jpg')
-faces,img_gray_test=facedetect(img_test)
-
-for f in faces:
-    (x,y,w,h)=f
-    req_region=img_gray_test[y:y+w,x:x+h]
-    label,confi=classifier.predict(req_region)
-    all_labels.append(names_dic[label].capitalize())
-    rectangle(f,img_gray_test)
-    text(img_gray_test,names_dic[label].capitalize(),x,y)
-
-
-cv2.imshow('Gray',img_gray_test)
-cv2.waitKey(0)
-cv2.destroyAllWindows()'''
-
-def start_detection(subject='Testing'):
+def start_detection(subject):
     #live_prediction
     cam=cv2.VideoCapture(0)
     ch=1
@@ -113,6 +97,28 @@ def start_detection(subject='Testing'):
     cv2.destroyAllWindows()
 
     mark_attendance(all_labels,subject)
-
+    
+#test_prediction
 if __name__=='__main__':
-    start_detection(subject)
+    
+    img_test=cv2.imread('p4.jpg')
+    faces,img_gray_test=facedetect(img_test)
+
+    for f in faces:
+        (x,y,w,h)=f
+        req_region=img_gray_test[y:y+w,x:x+h]
+        label,confi=classifier.predict(req_region)
+        name_text=names_dic[label].capitalize()
+        print(confi)
+        if confi>50:
+            name_text='Unknown'
+        all_labels.append(names_dic[label].capitalize())
+        
+        rectangle(f,img_gray_test)
+        text(img_gray_test,name_text,x,y)
+    img_gray_test=cv2.resize(img_gray_test,(512,512))
+    cv2.imshow('Gray',img_gray_test)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+            
+
